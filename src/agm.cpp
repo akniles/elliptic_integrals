@@ -1,6 +1,10 @@
 #include "agm.h"
 
-std::string AGM::operator()(double a, double b, int iters) {
+std::string AGM::operator()(double a, double b, size_t precision) {
+    size_t mpf_precision = 5 * precision;
+    mpf_set_default_prec(mpf_precision);
+    size_t iters = std::max(static_cast<int>(std::log(precision)), 10);
+
     if (a < b) {
         std::swap(a, b);
     }
@@ -21,25 +25,22 @@ std::string AGM::operator()(double a, double b, int iters) {
         mpf_set(x, x_next);
         mpf_set(y, y_next);
     }
-    char *result = new char[precision];
+    char *result = new char[mpf_precision];
     mp_exp_t exp;
-    mpf_get_str(result, &exp, 10, 0, x);
+    mpf_get_str(result, &exp, 10, mpf_precision, x);
     mpf_set_ui(x, 0);
     mpf_set_ui(y, 0);
     mpf_clear(x_next);
     mpf_clear(y_next);
     std::string str_result(result);
     str_result = "0." + str_result + "@" + std::to_string(static_cast<int>(exp));
+    delete[] result;
     return str_result;
 }
 
-AGM::AGM(int set_precision) {
-    precision = set_precision;
-    mpf_set_default_prec(precision);
+AGM::AGM() {
     mpf_init(x);
     mpf_init(y);
-    mpf_set_ui(x, 0);
-    mpf_set_ui(y, 0);
 }
 
 AGM::~AGM() {

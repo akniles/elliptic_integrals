@@ -1,9 +1,13 @@
 #include "magm.h"
 
-std::string MAGM::operator()(double a, double b, int iters) {
+std::string MAGM::operator()(double a, double b, size_t precision) {
     if (a < b) {
         std::swap(a, b);
     }
+
+    size_t mpf_precision = 5 * precision;
+    mpf_set_default_prec(mpf_precision);
+    size_t iters = std::max(static_cast<int>(std::log(precision)), 10);
 
     mpf_set_d(x, a);
     mpf_set_d(y, b);
@@ -37,9 +41,9 @@ std::string MAGM::operator()(double a, double b, int iters) {
         mpf_set(y, y_next);
     }
 
-    char *result = new char[precision];
+    char *result = new char[mpf_precision];
     mp_exp_t exp;
-    mpf_get_str(result, &exp, 10, 0, x);
+    mpf_get_str(result, &exp, 10, mpf_precision, x);
     mpf_set_ui(x, 0);
     mpf_set_ui(y, 0);
     mpf_set_ui(z, 0);
@@ -49,18 +53,16 @@ std::string MAGM::operator()(double a, double b, int iters) {
 
     std::string str_result(result);
     str_result = "0." + str_result + "@" + std::to_string(static_cast<int>(exp));
+
+    delete[] result;
+
     return str_result;
 }
 
-MAGM::MAGM(int set_precision) {
-    precision = set_precision;
-    mpf_set_default_prec(precision);
+MAGM::MAGM() {
     mpf_init(x);
     mpf_init(y);
     mpf_init(z);
-    mpf_set_ui(x, 0);
-    mpf_set_ui(y, 0);
-    mpf_set_ui(z, 0);
 }
 
 MAGM::~MAGM() {

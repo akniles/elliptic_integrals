@@ -10,7 +10,7 @@ public:
 
 	~SecondKind() = default;
 
-	std::string operator()(double k, int set_precision);
+	std::string operator()(double k, size_t precision);
 };
 
 #endif // EINTEGRALS_SECONDKIND_H

@@ -12,7 +12,7 @@ All calculations are made using gmp library (https://gmplib.org/) so you need it
 brew install gmp
 ```
 ## Examples
-All examples can be found in https://github.com/akniles/elliptic_integrals/master/examples, if you didn't link gmp library, you can run
+All examples can be found in https://github.com/akniles/elliptic_integrals/tree/master/examples, if you didn't link gmp library, you can run
 ```
 g++ -o test first.cpp -I/usr/local/include -L/usr/local/lib -lgmpxx -lgmp
 ```
